@@ -1,0 +1,25 @@
+# {{ ansible_managed }}
+# Responder agent sudoers — READ-ONLY baseline (every host class).
+# Scope notes (council review 2026-11-22): sudoers wildcards match across
+# arguments; restart lines are therefore generated from the enumerated list
+# in vars/responder.yml by the playbook, never wildcarded. visudo -c checks
+# syntax, not scope — the wrapper re-checks against the active runbook.
+#
+# This baseline grants NO restart/stop/start — only observation.
+
+responder ALL=(root) NOPASSWD: \
+    /usr/bin/systemctl status *, \
+    /usr/bin/systemctl is-active *, \
+    /usr/bin/systemctl list-units, \
+    /usr/bin/journalctl, \
+    /usr/bin/dmesg, \
+    /usr/bin/df, \
+    /usr/bin/df -h, \
+    /usr/bin/du, \
+    /usr/sbin/smartctl -a *, \
+    /usr/bin/apt-mark showhold, \
+    /usr/bin/dpkg --audit, \
+    /usr/bin/free, \
+    /usr/bin/uptime, \
+    /usr/bin/last, \
+    /usr/sbin/blkid

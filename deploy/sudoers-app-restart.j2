@@ -1,0 +1,20 @@
+# {{ ansible_managed }}
+# Responder agent sudoers — APP HOST tier-1 restarts.
+# Units enumerated per-host in vars/responder.yml (responder_restartable_units);
+# this template emits one exact sudoers line per unit — no wildcards.
+# Foreground journal access added per-unit: journalctl -u <unit> is what the
+# runbooks read immediately after a restart.
+#
+# apt-mark hold lines are emitted ONLY when the host declares hold-able
+# packages — an empty list must never produce an empty-argument sudoers line.
+
+responder ALL=(root) NOPASSWD: \
+{% for unit in responder_units %}
+    /usr/bin/systemctl restart {{ unit }}, \
+    /usr/bin/journalctl -u {{ unit }} --no-pager, \
+{% endfor %}
+{% if apt_hold_packages | length > 0 %}
+    /usr/bin/apt-mark hold {{ apt_hold_packages | join(' ') }}, \
+    /usr/bin/apt-mark unhold {{ apt_hold_packages | join(' ') }}, \
+{% endif %}
+    /usr/bin/apt-mark showhold

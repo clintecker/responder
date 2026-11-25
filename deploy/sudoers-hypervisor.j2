@@ -1,0 +1,23 @@
+# {{ ansible_managed }}
+# Responder agent sudoers — HYPERVISOR tier-1 (qm/pct status + reset ONLY).
+#
+# The hypervisor class gets NO systemctl restart at all (see
+# responder_forbidden_units in vars/responder.yml — pve-cluster, pveproxy,
+# corosync etc. are fleet-critical; restarting pmxcfs turns one hung guest
+# into a cluster incident). qm reset is gated by the runbook's verified-hung
+# preconditions and lands in the incident artifact + audit journal.
+
+responder ALL=(root) NOPASSWD: \
+    /usr/sbin/qm status *, \
+    /usr/sbin/qm config *, \
+    /usr/sbin/qm reset *, {% if responder_qm_resume_vms is defined %}{% for v in responder_qm_resume_vms %}\
+    /usr/sbin/qm resume {{ v }},{% endfor %}{% endif %} \
+    /usr/sbin/qm agent *, \
+    /usr/sbin/qm list, {% if responder_qm_start_vms is defined %}{% for v in responder_qm_start_vms %}\
+    /usr/sbin/qm start {{ v }},{% endfor %}{% endif %} \
+    /usr/sbin/pct status *, \
+    /usr/sbin/pct list, \
+    /usr/bin/apt-mark hold *, \
+    /usr/bin/apt-mark unhold *
+# journal reads come from the common sudoers (plain journalctl). Kernel-panic
+# forensics on hypervisors use that — no unit-name wildcards needed here.

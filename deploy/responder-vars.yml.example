@@ -1,0 +1,34 @@
+# Per-host-class configuration for the responder identity playbook.
+# Copy to vars/responder.yml and fill in. Every restartable unit is
+# ENUMERATED; the playbook hard-fails on any wildcard or forbidden unit.
+
+responder_user: responder
+responder_group: responder
+responder_dns_domain: example.internal
+responder_allowed_source_ranges:   # where the SSH key may connect from
+  - 10.0.0.0/8
+  - 100.64.0.0/10
+
+responder_key_hosts:
+  app_hosts:
+    - app1.example.internal
+    - app2.example.internal
+  hypervisors:
+    - hv-01.example.internal
+    - hv-02.example.internal
+  readonly_only: []                # hosts that get the key with NO sudoers
+
+# Exact systemctl restart units per host -> sudoers lines (no wildcards)
+responder_restartable_units:
+  app1.example.internal:
+    - caddy.service
+    - app.service
+
+# Units the responder must NEVER touch
+responder_forbidden_units:
+  - pve-cluster.service
+  - corosync.service
+  - tailscaled.service
+  - ssh.service
+
+responder_excluded_hosts: []       # hosts that get nothing at all

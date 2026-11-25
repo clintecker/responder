@@ -1,0 +1,4 @@
+{
+  "sites": {"primary": "Primary site", "dr": "DR site"},
+  "groups": {"infrastructure": "Infrastructure", "apps": "Applications"}
+}

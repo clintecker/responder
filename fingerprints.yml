@@ -1,0 +1,62 @@
+# Responder fingerprint table — static rules, no AI in the routing layer.
+# Loaded by classifier.py at startup. Unknown alertnames fall to the
+# `default` entry (escalate-only). New fingerprints are added by humans
+# after postmortems (the learning loop's gate).
+#
+# match: alert labels that must all equal (batch-level: highest-tier match wins)
+# tier:  0=observe/report  1=deterministic remediation scripts allowed
+# runbook: path relative to this directory (null = escalate-only)
+#
+# The design principle: fingerprints that match the same alertname are
+# disambiguated by EVIDENCE inside the runbook scripts, not by the
+# classifier — the classifier only string-matches labels.
+
+- name: host_down_guest_hung
+  match: { alertname: HostDown }
+  tier: 1
+  runbook: runbooks/qm_reset_guest.sh
+  # The verified-hung gate lives IN the runbook (3 independent checks:
+  # hypervisor status, guest agent, guest SSH).
+
+- name: fleet_mass_down
+  match: { alertname: FleetMassDown }
+  tier: 0
+  runbook: runbooks/mass_down_triage.sh
+  # Leads with out-of-band signals; consults log aggregation only after
+  # establishing its liveness (a monitoring fault cannot adjudicate itself).
+
+- name: service_failed_loop
+  match: { alertname: SystemdServiceFailed }
+  tier: 1
+  runbook: runbooks/service_restart_once.sh
+  # Restart once is in the script; the 2-attempt wrapper cap handles repeats.
+
+- name: kernel_panic_signature
+  match: { alertname: SystemdServiceFailed }
+  tier: 1
+  runbook: runbooks/kernel_panic_hold.sh
+  # Checks for the panic/upgrade journal signature; if absent returns
+  # noaction and the service-restart path applies instead.
+
+- name: disk_pressure
+  match: { alertname: HostHighDisk }
+  tier: 0
+  runbook: null    # report+trend, never delete
+
+- name: host_reboot_required
+  match: { alertname: HostRebootRequired }
+  tier: 0
+  runbook: null    # reboots stay human-scheduled by design
+
+- name: default
+  match: {}
+  tier: 0
+  runbook: null    # every unclassified alert: escalate-only, push the human
+
+# A tier-1 pilot showing the full decision-tree runbook pattern (G0..G5
+# gates, dual vantage verification, mapping-table target resolution):
+- name: endpoint_down_pilot
+  match: { alertname: EndpointDown }
+  tier: 1
+  runbook: runbooks/endpoint_down_diagnose.sh
+  # G0 persistence gate + canonical identity mapping live in the runbook.
