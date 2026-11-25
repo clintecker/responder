@@ -1,6 +1,6 @@
 #!/bin/bash
 # Fleet responder runbook: EndpointDown remediation — diagnose-then-act.
-# Design: docs/plans/2026-11-24-endpoint-down-remediation.md (oracle-revised).
+# Decision tree: G0..G5 gates, every tier-1 action gated by its own evidence.
 #
 # Decision tree (G0..G5). Every tier-1 action is gated by its own evidence
 # precondition. This pilot handles ONE endpoint; the mapping table below is
@@ -83,7 +83,7 @@ for i in $(seq 1 10); do
     P=$(curl -s --data-urlencode "query=probe_success{instance=\"$URL\"}" \
         ${PROM_URL:-http://localhost:9090}/api/v1/query 2>/dev/null \
         | grep -oE '"value":\[[^,]+,"[01]"\]' | grep -oE '"[01]"\]$' | tr -d '"]')
-    # ABSENT series = probe infrastructure fault, never "up" (oracle B3)
+    # ABSENT series = probe infrastructure fault, never "up" (design review)
     if [ -z "$P" ]; then
         log "G0: probe series ABSENT — blackbox/prometheus fault is possible"
         log "RESULT: escalate probe-series-absent — probe infrastructure, not the target"
@@ -98,7 +98,7 @@ for i in $(seq 1 10); do
 done
 log "G0: still down after the persistence window — proceeding"
 
-# --- G1: probe honesty, two INDEPENDENT vantages (oracle B3) ---------------
+# --- G1: probe honesty, two INDEPENDENT vantages (design review) ---------------
 # Vantage 1: the target's own hypervisor. Vantage 2: a different host on
 # a different path (prometheus is NOT independent — it runs the blackbox
 # exporter that raised the alert).
@@ -207,7 +207,7 @@ if [ "$AGENT_DEAD" = "1" ] && [ "$SSHDEAD" = "1" ]; then
 fi
 log "G3: guest alive (agent=$([ $AGENT_DEAD -eq 0 ] && echo yes || echo no) ssh=$([ $SSHDEAD -eq 0 ] && echo yes || echo no))"
 
-# --- G4: app layer — local check must MIRROR the probe (oracle B4) ---------
+# --- G4: app layer — local check must MIRROR the probe ---------------------
 # Same URL, same scheme, same Host, same TLS: --resolve pins the URL's host
 # to loopback so we test the full local stack through the guest's own name.
 # --resolve pins the URL's hostname to loopback so the guest tests its own

@@ -6,7 +6,7 @@ alert batch against a static fingerprint table (scripts/responder/
 fingerprints.yml), and spawns a fresh pi responder session for incidents
 that qualify. Unknown fingerprints escalate-only (push, never spawn).
 
-Failure posture (council review MUST #4):
+Failure posture:
 - Never fails Alertmanager's delivery: bad input -> log + 200.
 - Heartbeat: touches /var/lib/responder/heartbeat every loop; the
   item-0 rules deploy alerts on its absence.
@@ -216,7 +216,7 @@ def handle_batch(payload):
     # Resolution bookkeeping: any resolved alert for this dedupe family
     # stamps resolved_at so the re-fire cooldown ("recently RESOLVED ->
     # escalate, don't re-run") actually has data to work with. Found as
-    # dead code by oracle review 2026-11-24 (B1 addendum): resolved_at was
+    # (review finding): resolved_at was
     # read but never written, making REFIRE_COOLDOWN unreachable.
     resolved_here = [a for a in alerts if a.get("status") == "resolved"]
     firing_here = [a for a in alerts if a.get("status", "firing") == "firing"]

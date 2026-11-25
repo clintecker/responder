@@ -1,6 +1,6 @@
 #!/bin/bash
 # Fleet responder runbook: fleet mass-down triage (tier 0 — observe, never reset).
-# Council MUST #4: this runbook leads with OUT-OF-BAND signals (hypervisor
+# This runbook leads with OUT-OF-BAND signals (hypervisor
 # qm status sweep, blackbox probes on distinct hosts) and consults Loki ONLY
 # after establishing Loki's own liveness — the Nov 17 storm was a monitoring
 # fault, so the monitoring stack cannot adjudicate a suspected monitoring fault.

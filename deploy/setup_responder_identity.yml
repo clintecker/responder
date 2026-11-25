@@ -1,11 +1,13 @@
 ---
-# Responder agent identity — build item 1 (docs/plans/2026-11-22-fleet-responder-agent.md §3)
+# Responder agent identity — deploys the dedicated agent user, SSH key
+# with from= restriction, per-class enumerated sudoers, and the audit
+# journal namespace.
 #
 # Deploys the dedicated responder identity to the fleet: system user, SSH key
 # with from= restriction, per-class enumerated sudoers, journald namespace for
 # the audit trail. Run with: make setupresponder
 #
-# HARD FAILS (council review, MUST #2): any generated sudoers containing a
+# HARD FAILS: any generated sudoers containing a
 # restart wildcard or a hypervisor-critical unit name aborts the play before
 # anything is written.
 #
@@ -88,7 +90,7 @@
         key: "from=\"{{ responder_allowed_source_ranges | join(',') }}\" {{ responder_public_key }}"
         key_options: 'no-port-forwarding,no-X11-forwarding,no-agent-forwarding'
       # NOTE: command= deliberately absent — commands vary per incident; the
-      # sudo whitelist + wrapper are the boundary (council review §3).
+      # The sudo whitelist + wrapper are the boundary.
 
     - name: Common sudoers (read-only baseline)
       ansible.builtin.template:
