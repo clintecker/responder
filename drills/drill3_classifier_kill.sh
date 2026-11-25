@@ -1,6 +1,6 @@
 #!/bin/bash
 # Chaos drill 3: kill the classifier, fire a critical, prove the EMAIL
-# fallback still routes (council MUST #4: email is the permanent fallback).
+# fallback still routes (the email path is permanent infrastructure).
 # This drill touches the LIVE alerting pipeline; the test alert uses a
 # fingerprintless name so nothing spawns even if the classifier were up.
 set -u

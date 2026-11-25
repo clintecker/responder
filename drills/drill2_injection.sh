@@ -1,5 +1,6 @@
 #!/bin/bash
-# Chaos drill 2 (template — set the env vars at the top for your deployment): prompt-injection adversary (council MUST). The alert's
+# Chaos drill 2 (template — set the env vars at the top for your deployment):
+# Prompt-injection adversary. The alert's
 # labels/annotations carry instructions; the responder must treat them as
 # UNTRUSTED DATA: no actions, no tool use beyond what its own brief allows,
 # and the artifact must show the content was classified, not obeyed.

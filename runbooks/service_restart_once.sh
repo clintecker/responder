@@ -1,6 +1,6 @@
 #!/bin/bash
 # Fleet responder runbook: single failed service — restart ONCE (tier 1).
-# The wrapper's 2-attempt cap backs this up mechanically (council MUST #3).
+# The wrapper's 2-attempt cap backs this up mechanically.
 # If the service is `down` again after the restart, RESULT: escalate.
 # Usage: service_restart_once.sh <unit-name> [host-fqdn defaults to local]
 

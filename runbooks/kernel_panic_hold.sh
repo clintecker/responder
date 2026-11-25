@@ -3,7 +3,7 @@
 # Response (from the Nov 18 web incident, postmortem in the fleet docs):
 # hold the suspect kernel package so the nightly can't re-panic the host,
 # verify dpkg state, PROPOSE the reboot (reboots stay human-scheduled).
-# Success criterion (council): diagnosis complete + human notified — NOT
+# Success criterion: diagnosis complete + human notified — NOT
 # "incident resolved"; the reboot itself is the owner's.
 #
 # Usage: kernel_panic_hold.sh <host-fqdn> [package-glob, default linux-image-*]

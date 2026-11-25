@@ -1,6 +1,6 @@
 #!/bin/bash
 # Fleet responder wrapper — mechanical enforcement of tier-1 actions.
-# Council MUST #3: guards live in the harness, not the prompt. This wrapper:
+# Guards live in the harness, not the prompt. This wrapper:
 #   1. accepts ONLY commands whose exact line appears in the ACTIVE runbook's
 #      action list (passed via env from the spawn),
 #   2. counts invocations per action (state dir), refuses the third attempt,

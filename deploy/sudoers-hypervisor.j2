@@ -3,7 +3,7 @@
 #
 # The hypervisor class gets NO systemctl restart at all (see
 # responder_forbidden_units in vars/responder.yml — pve-cluster, pveproxy,
-# corosync etc. are fleet-critical; restarting pmxcfs turns one hung guest
+# corosync etc. are fleet-critical; restarting the cluster service turns one hung guest
 # into a cluster incident). qm reset is gated by the runbook's verified-hung
 # preconditions and lands in the incident artifact + audit journal.
 

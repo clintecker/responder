@@ -2,9 +2,9 @@
 # Fleet responder runbook: qm reset of a verified-hung guest (tier 1).
 # Usage: qm_reset_guest.sh <fqdn-or-vmid> <hypervisor-fqdn>
 #
-# Preconditions are machine-checkable and INDEPENDENCE-ANNOTATED (council
-# MUST: agent-death and console-silence are correlated — both die early in
-# a wedge — so the hypervisor-side status check carries decisive weight).
+# Preconditions are machine-checkable and annotated for signal INDEPENDENCE
+# (agent-death and console-silence correlate — both die early in a wedge —
+# so the hypervisor-side status check carries decisive weight).
 # Every step is logged to the responder audit namespace via logger.
 # Output contract: last line is `RESULT: <ok|escalate|noaction> <detail>`.
 
@@ -70,7 +70,7 @@ elif ssh -o ConnectTimeout=10 -o BatchMode=yes "$GUEST" true >/dev/null 2>&1; th
 else
     log "precondition-3 ok: guest SSH unreachable"
 fi
-# --- Correlated-signal caveat (council: 2-of-3 checks correlate) ------------
+# --- Correlated-signal caveat: agent+ssh checks correlate -------------------
 log "NOTE: agent-dead + ssh-dead are correlated (both die early in a wedge); the hypervisor-side running state is the independent anchor. If the guest were merely slow, reset is recoverable either way (a running guest losing power-safe state is the accepted cost, documented in the runbook review)."
 
 # --- Action: reset -----------------------------------------------------------

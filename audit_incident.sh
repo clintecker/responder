@@ -1,5 +1,5 @@
 #!/bin/bash
-# Fleet responder mechanical audit (council MUST #6).
+# Responder mechanical audit: verify every mutation left a journal trace.
 # Diffs the incident window's sudo journal lines (responder namespace) against
 # the runbook's allowed-action list + wrapper ledger; prints surplus and
 # attempt-cap violations. Output is appended to the incident artifact.
